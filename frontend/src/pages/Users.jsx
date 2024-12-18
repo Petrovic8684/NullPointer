@@ -33,9 +33,7 @@ const UsersPage = () => {
   const fetchUsers = async () => {
     try {
       const response = await axios.get(
-        `${baseUrl}:${
-          import.meta.env.VITE_BACKEND_PORT
-        }/users?page=${page}&limit=10`
+        `${baseUrl}/users?page=${page}&limit=10`
       );
 
       setUsers((prevUsers) => [...prevUsers, ...response.data.users]);

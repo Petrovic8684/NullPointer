@@ -21,9 +21,7 @@ const SingleAnswerPage = () => {
 
   const fetchData = async () => {
     try {
-      const answerRes = await axios.get(
-        `${baseUrl}:${import.meta.env.VITE_BACKEND_PORT}/answers/${id}`
-      );
+      const answerRes = await axios.get(`${baseUrl}/answers/${id}`);
 
       setAnswer(answerRes.data);
     } catch (err) {

@@ -99,7 +99,7 @@ const QuestionsPage = () => {
       }
 
       const response = await axios.post(
-        `${baseUrl}:${import.meta.env.VITE_BACKEND_PORT}/questions`,
+        `${baseUrl}/questions`,
         {
           title: newQuestion.title,
           body: newQuestion.body,
@@ -133,11 +133,7 @@ const QuestionsPage = () => {
         ...filters,
       });
 
-      const res = await axios.get(
-        `${baseUrl}:${
-          import.meta.env.VITE_BACKEND_PORT
-        }/questions?${queryParams}`
-      );
+      const res = await axios.get(`${baseUrl}/questions?${queryParams}`);
       setQuestions((prev) => [...prev, ...res.data.questions]);
     } catch (error) {
       setError(
@@ -151,9 +147,7 @@ const QuestionsPage = () => {
   const fetchUsersByReputation = async () => {
     try {
       const res = await axios.get(
-        `${baseUrl}:${
-          import.meta.env.VITE_BACKEND_PORT
-        }/users/byReputation?page=1&limit=10`
+        `${baseUrl}/users/byReputation?page=1&limit=10`
       );
 
       setUsers(res.data.users);

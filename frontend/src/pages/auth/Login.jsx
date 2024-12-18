@@ -18,10 +18,7 @@ const LoginPage = () => {
     try {
       setError("");
 
-      const response = await axios.post(
-        `${baseUrl}:${import.meta.env.VITE_BACKEND_PORT}/users/login`,
-        userData
-      );
+      const response = await axios.post(`${baseUrl}/users/login`, userData);
       localStorage.setItem("token", response.data.token);
       navigate("/questions");
     } catch (err) {
@@ -41,10 +38,7 @@ const LoginPage = () => {
     try {
       setError("");
 
-      await axios.post(
-        `${baseUrl}:${import.meta.env.VITE_BACKEND_PORT}/users/forgotPassword`,
-        userData
-      );
+      await axios.post(`${baseUrl}/users/forgotPassword`, userData);
 
       navigate("/forgot-password");
     } catch (err) {

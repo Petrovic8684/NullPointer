@@ -50,9 +50,7 @@ const UserProfilePage = () => {
 
   const fetchUserData = async () => {
     try {
-      const userRes = await axios.get(
-        `${baseUrl}:${import.meta.env.VITE_BACKEND_PORT}/users/${id}`
-      );
+      const userRes = await axios.get(`${baseUrl}/users/${id}`);
       setUser(userRes.data);
     } catch (error) {
       console.error("Error fetching user data: ", error);
@@ -62,9 +60,7 @@ const UserProfilePage = () => {
   const fetchQuestions = async () => {
     try {
       const questionsRes = await axios.get(
-        `${baseUrl}:${
-          import.meta.env.VITE_BACKEND_PORT
-        }/questions/byUser/${id}?limit=5&page=${pageQuestions}`
+        `${baseUrl}/questions/byUser/${id}?limit=5&page=${pageQuestions}`
       );
       setQuestions((prev) => [...prev, ...questionsRes.data.questions]);
     } catch (error) {
@@ -75,9 +71,7 @@ const UserProfilePage = () => {
   const fetchAnswers = async () => {
     try {
       const answersRes = await axios.get(
-        `${baseUrl}:${
-          import.meta.env.VITE_BACKEND_PORT
-        }/answers/byUser/${id}?limit=5&page=${pageAnswers}`
+        `${baseUrl}/answers/byUser/${id}?limit=5&page=${pageAnswers}`
       );
       setAnswers((prev) => [...prev, ...answersRes.data.answers]);
     } catch (error) {
@@ -93,7 +87,7 @@ const UserProfilePage = () => {
     try {
       const action = user.isBanned ? "unban" : "ban";
       await axios.put(
-        `${baseUrl}:${import.meta.env.VITE_BACKEND_PORT}/users/${id}/${action}`,
+        `${baseUrl}/users/${id}/${action}`,
         {},
         {
           headers: {
@@ -110,7 +104,7 @@ const UserProfilePage = () => {
   const handlePromote = async () => {
     try {
       await axios.put(
-        `${baseUrl}:${import.meta.env.VITE_BACKEND_PORT}/users/${id}/promote`,
+        `${baseUrl}/users/${id}/promote`,
         {},
         {
           headers: {

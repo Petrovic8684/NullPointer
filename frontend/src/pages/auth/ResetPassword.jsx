@@ -21,12 +21,7 @@ const ResetPasswordPage = () => {
     try {
       setError("");
 
-      await axios.post(
-        `${baseUrl}:${
-          import.meta.env.VITE_BACKEND_PORT
-        }/users/resetPassword/${token}`,
-        userData
-      );
+      await axios.post(`${baseUrl}/users/resetPassword/${token}`, userData);
 
       navigate("/login");
     } catch (err) {

@@ -42,15 +42,11 @@ const SingleQuestionPage = () => {
 
   const fetchData = async () => {
     try {
-      const questionRes = await axios.get(
-        `${baseUrl}:${import.meta.env.VITE_BACKEND_PORT}/questions/${id}`
-      );
+      const questionRes = await axios.get(`${baseUrl}/questions/${id}`);
       setQuestion(questionRes.data);
 
       const answersRes = await axios.get(
-        `${baseUrl}:${
-          import.meta.env.VITE_BACKEND_PORT
-        }/answers/byQuestion/${id}?limit=5&page=${page}`
+        `${baseUrl}/answers/byQuestion/${id}?limit=5&page=${page}`
       );
 
       setAnswers((prev) => [...prev, ...answersRes.data.answers]);
@@ -65,9 +61,7 @@ const SingleQuestionPage = () => {
 
   const increaseViewCount = async () => {
     try {
-      await axios.post(
-        `${baseUrl}:${import.meta.env.VITE_BACKEND_PORT}/questions/${id}/viewed`
-      );
+      await axios.post(`${baseUrl}/questions/${id}/viewed`);
     } catch (error) {
       setError(
         error.response
@@ -90,7 +84,7 @@ const SingleQuestionPage = () => {
       }
 
       const res = await axios.post(
-        `${baseUrl}:${import.meta.env.VITE_BACKEND_PORT}/answers`,
+        `${baseUrl}/answers`,
         {
           body: newAnswer,
           questionId: id,

@@ -23,9 +23,7 @@ const useAuth = () => {
           setUserId(decodedToken.userId);
 
           const response = await axios.get(
-            `${baseUrl}:${import.meta.env.VITE_BACKEND_PORT}/users/${
-              decodedToken.userId
-            }`
+            `${baseUrl}/users/${decodedToken.userId}`
           );
 
           setIsAdmin(response.data.isAdmin);

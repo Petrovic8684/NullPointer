@@ -19,10 +19,7 @@ const RegisterPage = () => {
     try {
       setError("");
 
-      await axios.post(
-        `${baseUrl}:${import.meta.env.VITE_BACKEND_PORT}/users/register`,
-        userData
-      );
+      await axios.post(`${baseUrl}/users/register`, userData);
 
       navigate("/login");
     } catch (err) {
