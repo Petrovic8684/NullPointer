@@ -17,12 +17,12 @@ const LandingPage = () => {
   };
 
   return (
-    <div className="h-screen flex flex-col justify-center items-center pb-10">
+    <div className="h-screen flex flex-col justify-center items-center md:mx-20 mx-5">
       <FaArrowTrendUp
         size={100}
         className="text-blue-600 dark:text-blue-400 text-bold"
       />
-      <h1 className="text-4xl font-bold text-blue-600 mb-4 dark:text-blue-400">
+      <h1 className="text-4xl text-center font-bold text-blue-600 mb-4 dark:text-blue-400">
         Welcome to NullPointer!
       </h1>
       <p className="text-gray-700 mb-6 text-center max-w-md dark:text-gray-300">

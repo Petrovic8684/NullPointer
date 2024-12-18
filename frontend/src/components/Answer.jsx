@@ -26,15 +26,15 @@ const Answer = ({
   const navigate = useNavigate();
 
   useEffect(() => {
-    console.log(answer.userVotes);
     setTotalScore(answer.totalVoteScore);
+
     setVote(
       answer.userVotes.some(
         (vote) => vote.user._id === userId && vote.vote === "upvote"
       )
         ? "upvote"
         : answer.userVotes.some(
-            (vote) => user === vote.user._id && vote.vote === "downvote"
+            (vote) => vote.user._id === userId && vote.vote === "downvote"
           )
         ? "downvote"
         : null

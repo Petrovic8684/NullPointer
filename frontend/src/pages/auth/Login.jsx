@@ -51,8 +51,8 @@ const LoginPage = () => {
   };
 
   return (
-    <div className="h-screen flex justify-center items-center">
-      <div className="max-w-sm w-full p-10 border-4 border-blue-400 rounded-2xl dark:border-blue-500">
+    <div className="h-screen flex justify-center items-center md:mx-20 mx-5">
+      <div className="max-w-sm w-full p-10 md:border-4 border-2 border-blue-400 rounded-2xl dark:border-blue-500">
         <h2 className="text-2xl font-bold text-gray-700 mb-4 dark:text-gray-200">
           Login
         </h2>
