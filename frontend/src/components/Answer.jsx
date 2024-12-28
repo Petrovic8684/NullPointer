@@ -43,9 +43,7 @@ const Answer = ({
   const handleVote = async (vote) => {
     try {
       const response = await axios.post(
-        `${baseUrl}:${import.meta.env.VITE_BACKEND_PORT}/answers/${
-          answer._id
-        }/vote`,
+        `${baseUrl}/answers/${answer._id}/vote`,
         { vote },
         {
           headers: {
@@ -89,7 +87,7 @@ const Answer = ({
   const handleEditSubmit = async () => {
     try {
       const response = await axios.put(
-        `${baseUrl}:${import.meta.env.VITE_BACKEND_PORT}/answers/${answer._id}`,
+        `${baseUrl}/answers/${answer._id}`,
         { body: editedBody },
         {
           headers: {
@@ -134,14 +132,11 @@ const Answer = ({
 
   const handleDelete = async (answerId) => {
     try {
-      await axios.delete(
-        `${baseUrl}:${import.meta.env.VITE_BACKEND_PORT}/answers/${answerId}`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
+      await axios.delete(`${baseUrl}/answers/${answerId}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
 
       if (!setAnswers) {
         navigate(-1);

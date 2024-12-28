@@ -24,9 +24,7 @@ const Question = ({
   const handleEditSubmit = async () => {
     try {
       const response = await axios.put(
-        `${baseUrl}:${import.meta.env.VITE_BACKEND_PORT}/questions/${
-          question._id
-        }`,
+        `${baseUrl}/questions/${question._id}`,
         { title: editedTitle, body: editedBody },
         {
           headers: {
@@ -74,16 +72,11 @@ const Question = ({
 
   const handleDelete = async (questionId) => {
     try {
-      await axios.delete(
-        `${baseUrl}:${
-          import.meta.env.VITE_BACKEND_PORT
-        }/questions/${questionId}`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
+      await axios.delete(`${baseUrl}/questions/${questionId}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
 
       if (!setQuestions) {
         navigate(-1);
