@@ -82,9 +82,7 @@ const UserProfilePage = () => {
   const fetchQuestions = async () => {
     try {
       const questionsRes = await axios.get(
-        `${baseUrl}:${
-          import.meta.env.VITE_BACKEND_PORT
-        }/questions/byUser/${id}?limit=5&page=${pageQuestions}`
+        `${baseUrl}/questions/byUser/${id}?limit=5&page=${pageQuestions}`
       );
       setQuestions((prev) => [...prev, ...questionsRes.data.questions]);
     } catch (error) {
@@ -95,9 +93,7 @@ const UserProfilePage = () => {
   const fetchAnswers = async () => {
     try {
       const answersRes = await axios.get(
-        `${baseUrl}:${
-          import.meta.env.VITE_BACKEND_PORT
-        }/answers/byUser/${id}?limit=5&page=${pageAnswers}`
+        `${baseUrl}/answers/byUser/${id}?limit=5&page=${pageAnswers}`
       );
       setAnswers((prev) => [...prev, ...answersRes.data.answers]);
     } catch (error) {
