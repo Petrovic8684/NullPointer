@@ -33,9 +33,7 @@ const useAuth = () => {
             });
           } else {
             const response = await axios.get(
-              `${baseUrl}:${import.meta.env.VITE_BACKEND_PORT}/users/${
-                decodedToken.userId
-              }`
+              `${baseUrl}/users/${decodedToken.userId}`
             );
 
             const userData = {
