@@ -96,6 +96,7 @@ You can test the API endpoints using Postman or your preferred API client. Below
 | PUT    | /users/unban/:id     | Unban a user by id.                    | Admin  |
 | POST   | /users/requestReset  | Request a password reset email.        | Public |
 | POST   | /users/resetPassword | Reset password with a valid token.     | Public |
+| POST   | /users/uploadImage   | Uploads a new user profile image.      | User   |
 
 #### Question Routes
 

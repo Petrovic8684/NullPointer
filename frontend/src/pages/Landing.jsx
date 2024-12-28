@@ -13,6 +13,7 @@ const LandingPage = () => {
 
   const handleLogout = () => {
     localStorage.removeItem("token");
+    localStorage.removeItem("userData");
     setIsLoggedIn(false);
   };
 

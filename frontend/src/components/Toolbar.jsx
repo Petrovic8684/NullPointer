@@ -10,12 +10,12 @@ const Toolbar = ({ isAuthenticated, userId }) => {
 
   const handleLogout = () => {
     localStorage.removeItem("token");
+    localStorage.removeItem("userData");
     navigate("/");
   };
 
   const handleUserRedirect = () => {
     navigate(`/users/${userId}`);
-    navigate(0);
   };
 
   return (

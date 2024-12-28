@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import axios from "axios";
 import { baseUrl } from "../config/baseUrl";
 import useAuth from "../hooks/useAuth";
@@ -48,9 +48,13 @@ const SingleAnswerPage = () => {
       <Toolbar userId={userId} isAuthenticated={isAuthenticated} />
       <div className="md:mx-20 mx-5 my-24">
         <div className="max-w-4xl mx-auto">
-          <h1 className="text-3xl font-bold text-blue-500 mb-12 dark:text-blue-400">
+          <Link
+            to={`/questions/${answer.question._id}`}
+            className="text-3xl font-bold text-blue-500 dark:text-blue-400 hover:underline"
+          >
             {answer.question.title}
-          </h1>
+          </Link>
+          <div className="mt-12"></div>
           <Answer
             answer={answer}
             setAnswer={setAnswer}

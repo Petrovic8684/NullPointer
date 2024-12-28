@@ -2,32 +2,36 @@ const User = require("../models/userModel.js");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const nodemailer = require("nodemailer");
+const { cloudinary } = require("../config/cloudinary");
 
-// @desc    Fetches all users ( with optional filters and pagination).
+// @desc    Fetches all users (with optional filters, search, and pagination)
 // @route   GET /users
 // @access  Public
 const fetchAllUsers = async (req, res) => {
-  const { isAdmin, isBanned, page, limit } = req.query;
+  const { isAdmin, isBanned, page, limit, search } = req.query;
 
   try {
     const filter = {};
 
     if (isAdmin !== undefined) filter.isAdmin = isAdmin === "true";
     if (isBanned !== undefined) filter.isBanned = isBanned === "true";
+    if (search) filter.username = { $regex: search, $options: "i" };
 
-    let users = await User.find(filter).select("-password").lean();
-    if (!page || !limit || page <= 0 || limit <= 0)
-      return res.status(200).json(users);
+    const query = User.find(filter).select("-password");
 
-    // Pagination
-    const skip = (page - 1) * limit;
-    const usersLength = users.length;
-    users = users.slice(skip, skip + Number(limit));
+    const total = await User.countDocuments(filter);
+
+    if (page && limit) {
+      const skip = (page - 1) * limit;
+      query.skip(skip).limit(Number(limit));
+    }
+
+    const users = await query.lean();
 
     res.status(200).json({
-      total: usersLength,
-      page: Number(page),
-      totalPages: Math.ceil(usersLength / limit),
+      total,
+      page: Number(page) || 1,
+      totalPages: Math.ceil(total / limit),
       users,
     });
   } catch (error) {
@@ -302,6 +306,70 @@ const resetPassword = async (req, res) => {
   }
 };
 
+// @desc    Uploads a new user profile image.
+// @route   POST /users/uploadImage
+// @access  User
+const uploadImage = async (req, res) => {
+  try {
+    if (!req.body.image)
+      return res.status(400).json({ message: "No image provided!" });
+
+    if (!process.env.CLOUDINARY_UPLOAD_PRESET)
+      return res
+        .status(500)
+        .json({ message: "Missing cloudinary upload preset in .env!" });
+
+    if (!process.env.CLOUDINARY_FOLDER)
+      return res
+        .status(500)
+        .json({ message: "Missing cloudinary folder name in .env!" });
+
+    const base64Image = req.body.image;
+
+    const user = await User.findById(req.user._id);
+    if (!user) return res.status(404).json({ message: "User not found!" });
+
+    // Checks daily upload limit
+    const lastUpload = user.lastImageUpload;
+    if (lastUpload && new Date() - new Date(lastUpload) < 24 * 60 * 60 * 1000)
+      return res.status(429).json({
+        message: "You can only change your profile picture once per day!",
+      });
+
+    // Deletes the existing image if it exists
+    if (user.cloudinaryImageId)
+      await cloudinary.uploader.destroy(user.cloudinaryImageId);
+
+    const result = await cloudinary.uploader.upload(base64Image, {
+      upload_preset: process.env.CLOUDINARY_UPLOAD_PRESET.trim(),
+      folder: process.env.CLOUDINARY_FOLDER.trim(),
+      transformation: [{ width: 130, height: 130, crop: "fill" }],
+    });
+
+    // Updates user profile
+    user.image = result.secure_url;
+    user.cloudinaryImageId = result.public_id;
+    user.lastImageUpload = new Date();
+    await user.save();
+
+    return res.status(200).json({
+      message: "Image uploaded and saved successfully!",
+      imageUrl: result.secure_url,
+    });
+  } catch (error) {
+    if (error.http_code)
+      return res.status(error.http_code).json({
+        message: "Cloudinary error!",
+        error: error.message,
+      });
+
+    return res.status(500).json({
+      message: "Error uploading image!",
+      error: error.message,
+    });
+  }
+};
+
 module.exports = {
   fetchAllUsers,
   fetchOneUser,
@@ -314,4 +382,5 @@ module.exports = {
   unbanUser,
   requestPasswordReset,
   resetPassword,
+  uploadImage,
 };

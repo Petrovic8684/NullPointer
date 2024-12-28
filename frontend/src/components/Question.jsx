@@ -24,7 +24,9 @@ const Question = ({
   const handleEditSubmit = async () => {
     try {
       const response = await axios.put(
-        `${baseUrl}/questions/${question._id}`,
+        `${baseUrl}:${import.meta.env.VITE_BACKEND_PORT}/questions/${
+          question._id
+        }`,
         { title: editedTitle, body: editedBody },
         {
           headers: {
@@ -72,11 +74,16 @@ const Question = ({
 
   const handleDelete = async (questionId) => {
     try {
-      await axios.delete(`${baseUrl}/questions/${questionId}`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      await axios.delete(
+        `${baseUrl}:${
+          import.meta.env.VITE_BACKEND_PORT
+        }/questions/${questionId}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
 
       if (!setQuestions) {
         navigate(-1);
@@ -159,7 +166,7 @@ const Question = ({
 
       {/* Edit and Delete Section */}
       {isAuthenticated && !isBanned && (
-        <div className={`mt-1 flex space-x-2 justify-${align}`}>
+        <div className={`mt-2 flex space-x-2 justify-${align}`}>
           {/* Edit Button - Visible only for Author */}
           {(question.author._id ? question.author._id : question.author) ===
             userId && (

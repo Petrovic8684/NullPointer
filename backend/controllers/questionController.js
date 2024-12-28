@@ -2,7 +2,7 @@ const User = require("../models/userModel.js");
 const Question = require("../models/questionModel.js");
 const Answer = require("../models/answerModel.js");
 
-// @desc    Fetches all questions ( with optional filters and pagination).
+// @desc    Fetches all questions (with optional filters and pagination).
 // @route   GET /questions
 // @access  Public
 const fetchAllQuestions = async (req, res) => {
@@ -17,6 +17,7 @@ const fetchAllQuestions = async (req, res) => {
     maxAnswers,
     page,
     limit,
+    search,
   } = req.query;
 
   try {
@@ -51,6 +52,13 @@ const fetchAllQuestions = async (req, res) => {
         ...(filter.updatedAt || {}),
         $lte: new Date(updatedBefore),
       };
+
+    if (search) {
+      filter.$or = [
+        { title: { $regex: search, $options: "i" } }, // By title content
+        { body: { $regex: search, $options: "i" } }, // By body content
+      ];
+    }
 
     let questions = await Question.find(filter)
       .populate("answers")

@@ -10,12 +10,11 @@ import Question from "../components/Question";
 const QuestionsPage = () => {
   const [questions, setQuestions] = useState([]);
   const [users, setUsers] = useState([]);
+  const [searchQuery, setSearchQuery] = useState("");
   const [page, setPage] = useState(1);
   const [filters, setFilters] = useState({
     minViews: "",
     maxViews: "",
-    createdAfter: "",
-    createdBefore: "",
     updatedAfter: "",
     updatedBefore: "",
     minAnswers: "",
@@ -30,9 +29,35 @@ const QuestionsPage = () => {
     useAuth();
 
   useEffect(() => {
-    fetchQuestions();
     fetchUsersByReputation();
-  }, [page]);
+  }, []);
+
+  useEffect(() => {
+    const delayDebounceFn = setTimeout(() => {
+      setPage(1);
+      fetchQuestions({ search: searchQuery, page: 1 });
+    }, 300);
+
+    return () => clearTimeout(delayDebounceFn);
+  }, [searchQuery]);
+
+  const handleScroll = (e) => {
+    if (
+      window.innerHeight + document.documentElement.scrollTop + 1 >=
+      document.documentElement.scrollHeight
+    ) {
+      setPage((prevPage) => {
+        const nextPage = prevPage + 1;
+        fetchQuestions({ search: searchQuery, page: nextPage });
+        return nextPage;
+      });
+    }
+  };
+
+  useEffect(() => {
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, [searchQuery, page]);
 
   const toggleFilters = () => {
     setShowFilters((prev) => !prev);
@@ -66,20 +91,6 @@ const QuestionsPage = () => {
     });
     return queryParams.toString();
   };
-
-  const handleScroll = (e) => {
-    if (
-      window.innerHeight + e.target.documentElement.scrollTop + 1 >=
-      e.target.documentElement.scrollHeight
-    ) {
-      setPage((prev) => prev + 1);
-    }
-  };
-
-  useEffect(() => {
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
 
   const handlePostNewQuestion = async () => {
     if (!newQuestion.title) {
@@ -125,16 +136,19 @@ const QuestionsPage = () => {
     }
   };
 
-  const fetchQuestions = async () => {
+  const fetchQuestions = async ({ search = "", page = 1 } = {}) => {
     try {
       const queryParams = buildQueryParams({
+        search,
         page,
         limit: 5,
         ...filters,
       });
 
       const res = await axios.get(`${baseUrl}/questions?${queryParams}`);
-      setQuestions((prev) => [...prev, ...res.data.questions]);
+
+      if (page === 1) setQuestions(res.data.questions);
+      else setQuestions((prev) => [...prev, ...res.data.questions]);
     } catch (error) {
       setError(
         error.response
@@ -239,44 +253,6 @@ const QuestionsPage = () => {
                   />
                 </div>
 
-                {/* Created After */}
-                <div>
-                  <label
-                    className="block text-sm text-gray-700 dark:text-gray-200 mb-1 ml-1"
-                    htmlFor="createdAfter"
-                  >
-                    Created After
-                  </label>
-                  <input
-                    id="createdAfter"
-                    type="date"
-                    name="createdAfter"
-                    value={filters.createdAfter}
-                    onChange={handleFilterChange}
-                    placeholder="Select Start Date"
-                    className="border p-2 rounded w-full text-gray-900 dark:text-gray-100 bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-600"
-                  />
-                </div>
-
-                {/* Created Before */}
-                <div>
-                  <label
-                    className="block text-sm text-gray-700 dark:text-gray-200 mb-1 ml-1"
-                    htmlFor="createdBefore"
-                  >
-                    Created Before
-                  </label>
-                  <input
-                    id="createdBefore"
-                    type="date"
-                    name="createdBefore"
-                    value={filters.createdBefore}
-                    onChange={handleFilterChange}
-                    placeholder="Select End Date"
-                    className="border p-2 rounded w-full text-gray-900 dark:text-gray-100 bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-600"
-                  />
-                </div>
-
                 {/* Updated After */}
                 <div>
                   <label
@@ -364,7 +340,6 @@ const QuestionsPage = () => {
               </button>
             )}
           </div>
-
           {isAuthenticated && !isBanned ? (
             <div>
               <div className="flex justify-between items-center mb-2">
@@ -393,7 +368,7 @@ const QuestionsPage = () => {
                             title: e.target.value,
                           })
                         }
-                        className="w-3/5 p-2 border border-gray-300 rounded shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-800 dark:text-gray-200 dark:border-gray-600 dark:focus:ring-blue-400 dark:focus:border-blue-400"
+                        className="sm:w-3/5 w-full p-2 border border-gray-300 rounded shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-800 dark:text-gray-200 dark:border-gray-600 dark:focus:ring-blue-400 dark:focus:border-blue-400"
                       />
                     </div>
 
@@ -407,7 +382,7 @@ const QuestionsPage = () => {
                             body: e.target.value,
                           })
                         }
-                        className="w-4/5 p-2 border border-gray-300 rounded shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 resize-none dark:bg-gray-800 dark:text-gray-200 dark:border-gray-600 dark:focus:ring-blue-400 dark:focus:border-blue-400"
+                        className="sm:w-4/5 w-full p-2 border border-gray-300 rounded shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 resize-none dark:bg-gray-800 dark:text-gray-200 dark:border-gray-600 dark:focus:ring-blue-400 dark:focus:border-blue-400"
                         rows="4"
                       />
                     </div>
@@ -431,11 +406,18 @@ const QuestionsPage = () => {
           ) : (
             <></>
           )}
-
-          <h1 className="text-3xl font-bold text-gray-700 dark:text-gray-200 mt-10">
+          <h1 className="text-3xl font-bold text-gray-700 dark:text-gray-200 mt-10 mb-4">
             Questions
           </h1>
-
+          <div className="mb-8">
+            <input
+              type="text"
+              placeholder="Search Questions by Title or Body Content..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="sm:w-4/5 w-full p-2 border border-gray-300 rounded shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-800 dark:text-gray-200 dark:border-gray-600"
+            />
+          </div>
           {questions.map((question) => (
             <Question
               key={question._id}
@@ -454,7 +436,6 @@ const QuestionsPage = () => {
 
         <div className="w-1/6 h-full hidden lg:block text-center">
           {" "}
-          {/*bg-gray-100 rounded shadow*/}
           <h2 className="text-lg font-semibold text-gray-700 dark:text-gray-200 mb-2">
             Top Users
           </h2>

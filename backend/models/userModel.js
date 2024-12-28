@@ -18,6 +18,9 @@ const userSchema = new mongoose.Schema(
       type: String,
       required: [true, "Password is required!"],
     },
+    image: {
+      type: String,
+    },
     reputation: {
       type: Number,
       default: 0,
@@ -31,6 +34,12 @@ const userSchema = new mongoose.Schema(
       default: false,
     },
     lastQuestionReward: {
+      type: Date,
+    },
+    cloudinaryImageId: {
+      type: String,
+    },
+    lastImageUpload: {
       type: Date,
     },
   },
