@@ -1,5 +1,10 @@
 import React from "react";
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  Navigate,
+} from "react-router-dom";
 
 import { DarkModeProvider } from "./hooks/useDarkMode";
 
@@ -29,6 +34,8 @@ function App() {
           <Route path="/users/:id" element={<UserProfilePage />} />
           <Route path="/answers/:id" element={<SingleAnswerPage />} />
           <Route path="/users" element={<UsersPage />} />
+
+          <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </Router>
     </DarkModeProvider>
